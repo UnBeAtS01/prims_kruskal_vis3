@@ -6,10 +6,17 @@ import { network1, network2 } from "./networks";
 let UnionFind = require("union-find");
 
 function App() {
-  const [alog, setAlgo] = useState("");
+  const [alog, setAlgo] = useState(null);
   const [network, updateNetwork] = useState(network1);
   const [isClicked, startAnimation] = useState(false);
+  const [data, setData] = useState([0, 0, 0]);
+  const [number_nodes, setNonodes] = useState(0);
+  let networktrial = { edges: [], nodes: [] };
 
+  useEffect(() => {
+    if (alog === "kruskal") KruskalAlgo();
+    else if (alog === "prims") PrimsAlgo();
+  });
   const prim = (net, nods, canvas) => {
     let i = 0;
     let l = 0;
@@ -51,14 +58,14 @@ function App() {
         forest.link(u, v);
         //console.log(u, v);
 
-        canvas.node(u).highlight().size("1.25x");
-        canvas.node(u).color("purple");
-        canvas.pause(0.5);
-
-        canvas.edge([u, v]).highlight(0);
-        canvas.edge([u, v]).traverse("#00FF7F").thickness(5);
         canvas.node(v).highlight().size("1.25x");
         canvas.node(v).color("purple");
+        canvas.pause(0.5);
+
+        canvas.edge([v, u]).highlight(0);
+        canvas.edge([v, u]).traverse("#00FF7F").thickness(5);
+        canvas.node(u).highlight().size("1.25x");
+        canvas.node(u).color("purple");
         canvas.pause(0.5);
       }
     }
@@ -73,7 +80,9 @@ function App() {
       parent.push(-1);
     }
     let array = [];
-    array.push([1, 0, 0]);
+
+    array.push([net[0].e[0], net[0].e[1], net[0].w]);
+
     console.log(array[0]);
     console.log(net);
     console.log(nods);
@@ -96,25 +105,22 @@ function App() {
         } else if (net[i].e[1] === currval[0] && !visit[net[i].e[0]])
           array.push([net[i].e[0], currval[0], net[i].w]);
       }
-      if (currval[0] === 0) continue;
+      if (currval[0] === 0 || currval[1] === 0) continue;
       let u = currval[0];
       let v = currval[1];
 
-      canvas.node(u).highlight().size("1.25x");
-      canvas.node(u).color("orange");
-      canvas.pause(0.5);
-
-      canvas.edge([u, v]).highlight(0);
-      canvas.edge([u, v]).traverse("red").thickness(5);
       canvas.node(v).highlight().size("1.25x");
       canvas.node(v).color("orange");
       canvas.pause(0.5);
+
+      canvas.edge([v, u]).highlight(0);
+      canvas.edge([v, u]).traverse("red").thickness(5);
+      canvas.node(u).highlight().size("1.25x");
+      canvas.node(u).color("orange");
+      canvas.pause(0.5);
     }
   };
-  useEffect(() => {
-    if (alog === "kruskal") KruskalAlgo();
-    else if (alog === "prims") PrimsAlgo();
-  });
+
   const KruskalAlgo = () => {
     const canvas = createCanvas("graph");
     canvas.remove();
@@ -133,6 +139,10 @@ function App() {
     canvas.pause(2);
 
     if (isClicked) {
+      if (network.edges.length === 0) {
+        alert("please enter valid input");
+        return;
+      }
       prim(network.edges, network.nodes, canvas);
       startAnimation(false);
     }
@@ -155,12 +165,110 @@ function App() {
     canvas.pause(2);
 
     if (isClicked) {
+      if (network.edges.length === 0) {
+        alert("please enter valid input");
+        return;
+      }
       prim2(network.edges, network.nodes, canvas);
       startAnimation(false);
     }
   };
+  const handle_add = () => {
+    console.log(data);
+    networktrial.edges.push({ e: [data[0], data[1]], w: data[2] });
+    networktrial.nodes = [];
+    for (let i = 1; i <= number_nodes; i++) networktrial.nodes.push(i);
+  };
   return (
     <div className="App">
+      <div className="add_section">
+        <div className="add_graph_m">ADD GRAPHS</div>
+        <div style={{ margin: "5%" }}>
+          <div
+            style={{
+              font: "2rem",
+              display: "flex",
+              justifyContent: "center",
+              fontWeight: "lighter",
+            }}
+          >
+            <div style={{ display: "block", width: "60%" }}>
+              Enter number of Nodes:
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-around" }}>
+              <input
+                type="number"
+                placeholder="number"
+                onChange={(e) => {
+                  setNonodes(e.target.value);
+                  updateNetwork(null);
+                  networktrial = { edges: [], nodes: [] };
+                  setAlgo(null);
+                }}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="input_nodes">
+          <div
+            style={{
+              font: "2rem",
+              display: "flex",
+              justifyContent: "center",
+              fontWeight: "lighter",
+            }}
+          >
+            Input nodes should between {`1 to ${number_nodes}`}
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-around" }}>
+            {" "}
+            <input
+              type="number"
+              //value={data[0]}
+              placeholder="start"
+              onChange={(e) => {
+                let tempdata = [];
+                tempdata = data;
+                tempdata[0] = e.target.value;
+                setData(tempdata);
+              }}
+            />
+            <input
+              type="number"
+              //value={data[1]}
+              placeholder="end"
+              onChange={(e) => {
+                let tempdata = [];
+                tempdata = data;
+                tempdata[1] = e.target.value;
+                setData(tempdata);
+              }}
+            />
+            <input
+              type="number"
+              placeholder="weight"
+              onChange={(e) => {
+                let tempdata = [];
+                tempdata = data;
+                tempdata[2] = e.target.value;
+                setData(tempdata);
+              }}
+            />
+          </div>
+        </div>
+        <div className="graph_add_btns">
+          {" "}
+          <button className="button_add" onClick={handle_add}>
+            +ADD
+          </button>
+          <button
+            className="button_add"
+            onClick={() => updateNetwork(networktrial)}
+          >
+            +GRAPH
+          </button>
+        </div>
+      </div>
       <div className="graph-section">
         <div className="algos">
           <button
