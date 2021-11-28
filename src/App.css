@@ -91,7 +91,9 @@
   align-items: center;
   flex-wrap: wrap;
   width: 100%;
-  background-color: #fecafa;
+  background: content-box;
+
+  background: #fecafa;
   font-family: "Open Sans Condensed", sans-serif;
 }
 .graph-section {
@@ -171,12 +173,15 @@ input:focus {
 .button_add:hover {
   cursor: pointer;
 }
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 1000px) {
   .App {
     display: flex;
     flex-direction: column;
   }
   .add_section {
     width: 70vw;
+  }
+  .graph-section {
+    width: 90%;
   }
 }
