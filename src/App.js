@@ -192,10 +192,14 @@ function App() {
               fontWeight: "lighter",
             }}
           >
-            <div style={{ display: "block", width: "60%" }}>
-              Enter number of Nodes:
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-around" }}>
+            <div
+              style={{
+                display: "flex",
+
+                justifyContent: "space-around",
+              }}
+            >
+              <div style={{}}>Enter number of Nodes :</div>
               <input
                 type="number"
                 placeholder="number"

@@ -91,9 +91,8 @@
   align-items: center;
   flex-wrap: wrap;
   width: 100%;
-  background: content-box;
+  min-height: fit-content;
 
-  background: #fecafa;
   font-family: "Open Sans Condensed", sans-serif;
 }
 .graph-section {
